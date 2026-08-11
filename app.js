@@ -135,6 +135,53 @@ const editProfileNameInput = document.getElementById("edit-profile-name");
 const btnEditUserCancel = document.getElementById("btn-edit-user-cancel");
 const btnEditUserSave = document.getElementById("btn-edit-user-save");
 
+// Function to update segmented controls sliding active state
+function updateSegmentedSliders() {
+  const controls = document.querySelectorAll(".segmented-control");
+  controls.forEach(control => {
+    // Add slider indicator element if it doesn't exist
+    let slider = control.querySelector(".segmented-slider");
+    if (!slider) {
+      slider = document.createElement("div");
+      slider.className = "segmented-slider";
+      control.appendChild(slider);
+    }
+    
+    const items = control.querySelectorAll(".segment-item");
+    const activeItem = control.querySelector(".segment-item.active");
+    if (activeItem && slider) {
+      const activeIndex = Array.from(items).indexOf(activeItem);
+      const itemCount = items.length;
+      slider.style.width = `calc(${100 / itemCount}% - 8px)`;
+      slider.style.transform = `translateX(calc(${activeIndex * 100}% + ${activeIndex * 8}px))`;
+      
+      // Determine dynamic color representation based on category/type
+      const type = activeItem.getAttribute("data-type") || activeItem.getAttribute("data-stats-type");
+      if (type === "income") {
+        slider.style.backgroundColor = "var(--color-income-bg)";
+        slider.style.border = "1px solid var(--color-income)";
+        activeItem.style.color = "var(--color-income)";
+      } else if (type === "expense") {
+        slider.style.backgroundColor = "var(--color-expense-bg)";
+        slider.style.border = "1px solid var(--color-expense)";
+        activeItem.style.color = "var(--color-expense)";
+      } else {
+        // Default style for category/daily switch
+        slider.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+        slider.style.border = "1px solid var(--border-color)";
+        activeItem.style.color = "var(--color-text)";
+      }
+      
+      // Reset color of inactive siblings to muted state
+      items.forEach(item => {
+        if (item !== activeItem) {
+          item.style.color = "var(--color-text-muted)";
+        }
+      });
+    }
+  });
+}
+
 // ==========================================
 // 1. DATA AND SINKRONISASI STORAGE
 // ==========================================
@@ -643,8 +690,28 @@ function drawDonutChart(categoriesList, total) {
     
     // Hover details handler
     segment.addEventListener("click", () => {
-      chartTotalLabelEl.textContent = cat.name;
-      chartTotalAmountEl.textContent = formatIDR(cat.amount);
+      // Scale-down animation for center text (HCI micro-feedback)
+      const centerText = document.querySelector(".chart-center-text");
+      if (centerText) {
+        centerText.style.transition = "transform 0.1s ease, opacity 0.1s ease";
+        centerText.style.transform = "scale(0.92)";
+        centerText.style.opacity = "0.5";
+        
+        setTimeout(() => {
+          chartTotalLabelEl.textContent = cat.name;
+          chartTotalAmountEl.textContent = formatIDR(cat.amount);
+          
+          centerText.style.transform = "scale(1.05)";
+          centerText.style.opacity = "1";
+          
+          setTimeout(() => {
+            centerText.style.transform = "scale(1)";
+          }, 100);
+        }, 100);
+      } else {
+        chartTotalLabelEl.textContent = cat.name;
+        chartTotalAmountEl.textContent = formatIDR(cat.amount);
+      }
     });
     
     currentOffset += segmentLength;
@@ -842,6 +909,7 @@ function updateUI() {
   renderStatsReport();
   updateProfileUI();
   renderBusinessList();
+  updateSegmentedSliders();
 }
 
 // ==========================================
@@ -852,6 +920,16 @@ function updateUI() {
 function resetAddForm() {
   amountInput.value = "0";
   txNoteInput.value = "";
+  
+  // Reset active segment to expense for consistency
+  activeFormType = "expense";
+  formTypeSegments.forEach(s => {
+    if (s.getAttribute("data-type") === "expense") {
+      s.classList.add("active");
+    } else {
+      s.classList.remove("active");
+    }
+  });
   
   // Set date to today in input
   const today = getFormattedDateOffset(0);
@@ -864,6 +942,9 @@ function resetAddForm() {
   methodLabel.textContent = activeFormType === "income" ? "Metode Penerimaan" : "Metode Pembayaran";
   methodFormGroup.style.display = "block";
   renderMethodGrid();
+  
+  // Update sliding controls
+  updateSegmentedSliders();
 }
 
 function renderMethodGrid() {
@@ -1167,6 +1248,9 @@ function initEventListeners() {
       // Update method label and render
       methodLabel.textContent = activeFormType === "income" ? "Metode Penerimaan" : "Metode Pembayaran";
       renderMethodGrid();
+      
+      // Update sliding controls
+      updateSegmentedSliders();
     });
   });
   
@@ -1242,6 +1326,9 @@ function initEventListeners() {
       
       activeStatsType = seg.getAttribute("data-stats-type");
       renderStatsReport();
+      
+      // Update sliding controls
+      updateSegmentedSliders();
     });
   });
 
@@ -1259,6 +1346,9 @@ function initEventListeners() {
         statsCategorySection.style.display = "none";
         statsDailySection.style.display = "block";
       }
+      
+      // Update sliding controls
+      updateSegmentedSliders();
     });
   });
 
@@ -1303,4 +1393,7 @@ document.addEventListener("DOMContentLoaded", () => {
   applyTheme();
   initEventListeners();
   updateUI();
+  
+  // Extra safety update for sliding controls after layout finishes rendering
+  window.addEventListener("load", updateSegmentedSliders);
 });
