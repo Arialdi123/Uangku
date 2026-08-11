@@ -157,18 +157,23 @@ function updateSegmentedSliders() {
       
       // Determine dynamic color representation based on category/type
       const type = activeItem.getAttribute("data-type") || activeItem.getAttribute("data-stats-type");
+      const isLightMode = document.body.classList.contains("light-mode");
+      
       if (type === "income") {
-        slider.style.backgroundColor = "var(--color-income-bg)";
-        slider.style.border = "1px solid var(--color-income)";
-        activeItem.style.color = "var(--color-income)";
+        slider.style.backgroundColor = "var(--color-income)";
+        slider.style.border = "none";
+        slider.style.boxShadow = isLightMode ? "0 4px 12px rgba(27, 94, 32, 0.25)" : "0 4px 16px rgba(0, 230, 118, 0.45)";
+        activeItem.style.color = isLightMode ? "#ffffff" : "#020a06";
       } else if (type === "expense") {
-        slider.style.backgroundColor = "var(--color-expense-bg)";
-        slider.style.border = "1px solid var(--color-expense)";
-        activeItem.style.color = "var(--color-expense)";
+        slider.style.backgroundColor = "var(--color-expense)";
+        slider.style.border = "none";
+        slider.style.boxShadow = isLightMode ? "0 4px 12px rgba(245, 127, 23, 0.25)" : "0 4px 16px rgba(255, 214, 0, 0.35)";
+        activeItem.style.color = isLightMode ? "#ffffff" : "#020a06";
       } else {
         // Default style for category/daily switch
-        slider.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+        slider.style.backgroundColor = isLightMode ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.12)";
         slider.style.border = "1px solid var(--border-color)";
+        slider.style.boxShadow = "none";
         activeItem.style.color = "var(--color-text)";
       }
       
