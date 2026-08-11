@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#04140e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0c3624;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#05020f" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- Icon Background -->
+  <rect width="512" height="512" rx="140" fill="url(#grad)" />
+  
+  <!-- Subtle top diagonal gloss -->
+  <path d="M 0,0 L 512,0 L 512,180 C 400,280 150,150 0,320 Z" fill="white" opacity="0.06" />
+  
+  <!-- Centered Symbol Group (Wallet + Coin) -->
+  <g transform="translate(112, 112)" filter="url(#shadow)">
+    <!-- Back card of money slot -->
+    <path d="M 50,56 C 50,40 63,27 79,27 L 209,27 C 225,27 238,40 238,56 L 238,90 L 50,90 Z" fill="rgba(255, 255, 255, 0.4)" />
+    
+    <!-- Rising gold coins -->
+    <circle cx="144" cy="30" r="32" fill="#ffd600" />
+    <path d="M 144,14 L 144,46 M 128,30 L 160,30" stroke="#00e676" stroke-width="5" stroke-linecap="round" />
+    
+    <!-- Main Wallet Body -->
+    <rect x="20" y="70" width="248" height="178" rx="32" fill="white" />
+    
+    <!-- Wallet flap -->
+    <path d="M 150,96 L 254,124 C 262,126 268,133 268,141 L 268,177 C 268,185 262,192 254,194 L 150,222 Z" fill="#04140e" />
+    
+    <!-- Flap design accent line -->
+    <path d="M 230,135 C 230,135 242,150 242,160 C 242,170 230,185 230,185" fill="none" stroke="#ffd600" stroke-width="4" stroke-linecap="round" />
+    
+    <!-- Glowing green wallet clasp snap button -->
+    <circle cx="204" cy="160" r="16" fill="#00e676" />
+    <circle cx="204" cy="160" r="8" fill="white" opacity="0.6" />
+  </g>
+</svg>
